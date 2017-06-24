@@ -63,7 +63,7 @@ class UserController extends Controller
             'am' => 2,
             'pm' => 1);
 
-        //Validation of form
+        //Valid1ation of form
         $this->validate($request, [
             'presentDesignation' => 'required|not_in:0',
             'pdJoiningDate' => 'required',
