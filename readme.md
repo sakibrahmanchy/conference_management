@@ -1,6 +1,6 @@
 # Housing distribution 
 
-        Version: 1.0.1
+    Version: 1.0.1
 
 Housing distribution system is a utility provided by various organizations or institutions for their
 residents. It is a manual process and filing system is lengthy and difficult. This documentation provides
