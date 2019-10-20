@@ -3,14 +3,19 @@
     <head>
         <title>@yield('title')</title>
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
       {{--  <link href="https://fonts.googleapis.com/css?family=Lato:100" rel="stylesheet" type="text/css">--}}
         <link rel="stylesheet" href="{{ asset('bootstrap-3.3.7-dist/css/bootstrap.min.css') }}">
         <link rel="stylesheet" href="{{ asset('src/css/main.css') }}"/>
         <link rel="stylesheet" href="{{ asset('src/css/sweetalert.css') }}"/>
         <link rel="stylesheet" href="{{asset('src/css/navbar-fixed-side.css')}} " />
+        <link rel="stylesheet" href="{{asset('src/css/bootstrap-datepicker.css')}} " />
+
         <script src="{{ URL::to('jquery/jquery-3.1.1.min.js') }}"></script>
         <script src="{{ URL::to('bootstrap-3.3.7-dist/js/bootstrap.min.js') }}"></script>
-
+        <script src="{{ URL::to('src/js/bootstrap-datepicker.js') }}"></script>
+        <script src="{{ URL::to('src/ckeditor/ckeditor.js') }}"></script>
+        <script type="text/javascript" src="{{ URL::to('src/arrow-0.1.9.min.js') }}">
         <style>
 
           .modal-dialog {

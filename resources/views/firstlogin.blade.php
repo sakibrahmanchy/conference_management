@@ -7,91 +7,78 @@
 
 @section('content')
 
-<div class = "jumbotron">
-<h1>Welcome to cuet housing distribution system!!</h1>.<p class = "alert alert-warning"> This system only accepts verified users. Please fill up the form and wait
-until admin verifies you.<br> Thank you!</p>
-</div>
 
 
 @include('includes.message-block')
-<div class="row">
-    <div class="col-md-6">
-      <form action="{{ route('userinfoupdate') }}" method = "post" enctype="multipart/form-data">
-        <h3>Verification</h3>
-        <div class = "form-group" >
-            <label for="image">Photo(only .jpg)</label>
-            <label for="image" style = "color:red">**Please include a formal passport size photo. Otherwise the ID will be rejected.</label>
-            <input type="file" name = "image" class = "form-control" id  = "image"/>
-        </div> 
-        <div class="form-group {{ $errors->has('presentDesignation')?'has-error':''  }}" >
-            <label for="presentDesignation">Present Designation</label>
-            <select class = "form-control" name="presentDesignation" id = "presentDesignation">
-                <option selected="selected" value = "0">Select</option>
-                <option value="Professor">Professor</option>
-                <option value="Assistant Professor">Asst. Professor</option>
-                <option value="Lecturer">Lecturer</option>
-                <option value="Staff">Staff</option>
-            </select>
-        </div>
-        <div class="form-group {{ $errors->has('pdJoiningDate')?'has-error':''  }}">
-            <label for="pdJoiningDate">Joining date in this designation</label>
-            <input class ="form-control" type="date" name = "pdJoiningDate" id = "pdJoiningDate" />
-        </div>
-        <div class="form-group {{ $errors->has('joiningTime')?'has-error':''  }}" >
-            <label for="joiningTime">Joining Time</label>
-            <select class = "form-control" name="joiningTime" id = "joiningTime">
-                <option selected="" value = "0">Select(am/pm)</option>
-                <option value="am">am</option>
-                <option value="pm">pm</option>
-            </select>
-        </div>
-        <div class="form-group {{ $errors->has('payScale')?'has-error':''  }}" >
-            <label for="payScale">Pay Scale</label>
-            <select class = "form-control" name="payScale" id = "payScale">
-                <option selected="selected" value = "0">Select(1-7)</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-                <option value="4">4</option>
-                <option value="5">5</option>
-                <option value="6">6</option>
-                <option value="7">7</option>
-            </select>
-        </div>
-        <div class="form-group {{ $errors->has('firstDesignation')?'has-error':''  }}" >
-            <label for="firstDesignation">First Designation</label>
-              <select class = "form-control" name="firstDesignation" id = "firstDesignation">
-                <option selected="selected" value = "0">Select</option>
-                <option value="Professor">Professor</option>
-                <option value="Assistant Professor">Asst. Professor</option>
-                <option value="Lecturer">Lecturer</option>
-                <option value="Staff">Staff</option>
-            </select>
-        </div>
-        <div class="form-group {{ $errors->has('firstJoiningDate')?'has-error':''  }}" >
-            <label for="firstJoiningDate">First Joining Date</label>
-            <input class ="form-control" type="date" name = "firstJoiningDate" id = "firstJoiningDate" />
-        </div>
-        <div class="form-group {{ $errors->has('maritalStatus')?'has-error':''  }}" >
-            <label for="maritalStatus">Marital Status</label>
-             <select class = "form-control" name="maritalStatus" id = "maritalStatus">
-                <option selected="" value = "0">Select Status</option>
-                <option value="Married">Married</option>
-                <option value="Unmarried">Unmarried</option>
-                <option value="Divorced">Divorced</option>
-            </select>
-        </div>
-        <div class="form-group {{ $errors->has('department')?'has-error':''  }}" >
-            <label for="department">Department</label>
-            <input class ="form-control" type="text" name = "department" id = "department" />
+<div class="row jumbotron" style = "background-color: #204d74; color: #f5f5f5; ">
+    <div class="text-center">
+        <h2>Welcome to conference management system!!</h2>
+        <p class = "label label-warning" style="font-size:14px"> This system only accepts verified users. Please fill up the form and wait
+        until admin verifies you. Thank you!</p><br><br>
+    </div>
+    <div class="col-md-offset-2 col-md-8" >
+       <form action="{{ route('signup') }}" method = "post" enctype="multipart/form-data">
+        <div class="row">
+            <div class="col-md-6 form-group {{ $errors->has('email')?'has-error':''  }}" >
+                <label for="email">Your email</label>
+                <input class ="form-control" type="text" name = "email" id = "email" value = "{{ Request::old('email')  }}"/>
+            </div>
+            <div class="col-md-6 form-group {{ $errors->has('name')?'has-error':''  }}">
+                <label for="name">Your Name</label>
+                <input class ="form-control" type="text" name = "name" id = "name" value = "{{ Request::old('name')  }}"/>
+            </div>
         </div>
         <div class="form-group {{ $errors->has('phone')?'has-error':''  }}" >
-            <label for="phone">Phone</label>
-            <input class ="form-control" type="text" name = "phone" id = "phone" />
+            <label for="password">Your Password</label>
+            <input class ="form-control" type="password" name = "password" id = "password" />
         </div>
-        <button type = "submit" class = "btn btn-info">Verify</button>
+         <div class="form-group {{ $errors->has('address')?'has-error':''  }}" >
+            <label for="address">Address</label>
+            <textarea class ="form-control" type="address" name = "address" id = "address" row="30" col="5"></textarea>
+        </div>
+         <div class="form-group {{ $errors->has('phone')?'has-error':''  }}" >
+            <label for="phone">Phone</label>
+            <input class ="form-control" type="phone" name = "phone" id = "phone" />
+        </div>
+        <div class="row">
+            <div class="col-md-6 form-group {{ $errors->has('twitter')?'has-error':''  }}" >
+                <label for="twitter">Twitter</label>
+                <div class="input-group">
+                    <span style="background-color: #eee;" class="input-group-addon">twitter.com/</span>
+                    <input class ="form-control" type="twitter" name = "twitter" id = "twitter" />
+                </div>
+             </div>
+            <div class="col-md-6 form-group {{ $errors->has('twitter')?'has-error':''  }}" >
+                <label for="twitter">Facebook</label>
+                <div class="input-group">
+                    <span style="background-color: #eee;" class="input-group-addon">facebook.com/</span>
+                    <input class ="form-control" type="facebook" name = "facebook" id = "facebook" />
+                </div>
+            </div>
+        </div>
+
+         <div class = "form-group">
+                    <label for="image">Image(only .jpg)</label>
+                    <input type="file" name = "image" class = "form-control" id = "image"/>
+                </div>
+
+        <button type = "submit" class = "btn btn-primary">Submit</button>
         <input type="hidden" name = "_token" value = "{{ Session::token() }}"/>
       </form>
     </div>
  </div>
+
+ <script>
+ $(document).ready(function(){
+        $('.datepicker').datepicker({
+            orientation: "bottom",
+            autoclose: true,
+            format: 'yyyy/mm/dd'
+        });
+
+ });
+
+    CKEDITOR.replace('address');
+</script>
+
 @stop

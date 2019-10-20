@@ -24,9 +24,8 @@ class AdminController extends Controller
 
     public function getAdminPanel()
     {
-         $allotmentStatus = Allotment::where('allotmentstatus' ,"free")->get();
-         $requests = User::where('status','Not Verified')->count();
-         return view('adminpanel',['requests'=>$requests,'allotmentStatus'=>$allotmentStatus]);
+         $requests = User::where('status',0)->count();
+         return view('adminpanel',['requests'=>$requests]);
     }
 
     public function routeHouseEntry()
@@ -88,29 +87,29 @@ class AdminController extends Controller
 
     public function getUserRequests()
     {
-        $userRequests = User::where('status' ,"Not Verified")->orderBy('updated_at', 'desc','point','desc')->get();
+        $userRequests = User::where('status' ,"Not Verified")->orderBy('updated_at', 'desc')->get();
 
          return view('userrequests',['userRequests'=>$userRequests]);
     }
 
     public function UserAccept($userid)
     {
-        $user = User::where('userID',$userid)->first();
-        $user->status = 'Verified';
+        $user = User::where('id',$userid)->first();
+        $user->status = 1;
         $user->save();
 
-        $notification = new Notification();
+        /*$notification = new Notification();
         $notification->message="Your request has been accepted. You are now a verified user";
         $notification->to = $userid;
         $notification->from = "admin";
-        $notification->save();
+        $notification->save();*/
 
         return redirect()->route('user.requests');
     }
 
     public function UserReject($userid)
     {
-        $user = User::where('userID',$userid)->first();
+        $user = User::where('id',$userid)->first();
         $user->delete();
         return redirect()->route('user.requests');
     }

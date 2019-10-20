@@ -2,6 +2,7 @@
 namespace App\Http\Controllers;
 
 use App\Advertisement;
+use App\Conference;
 use App\Notification;
 use App\User;
 use App\UserRequest;
@@ -25,104 +26,62 @@ class UserController extends Controller
     public function postSignUp(Request $request)
     {
         $this->validate($request, [
-            'id' => 'required|unique:users,userID|numeric',
+            'email' => 'required|unique:users|email',
             'name' => 'required',
-            'password' => 'required|min:4'
+            'password' => 'required|min:6',
+            'address' => 'required'
 
         ]);
-        $id = $request['id'];
+
+        $email = $request['email'];
         $name = $request['name'];
         $password = bcrypt($request['password']);
-
-        $user = new User();
-        $user->userId = $id;
-        $user->name = $name;
-        $user->password = $password;
-
-        $user->save();
-        //  session(['user_id'=>$id]);
-        Auth::login($user);
-
-        return redirect()->route('firstlogin');
-    }
-
-    public function firstLogin()
-    {
-        return view('firstlogin');
-    }
-
-
-    public function userInfoUpdate(Request $request)
-    {
-
-        //Weight assign for user points
-        $weight = array('Professor' => 4,
-            'Assistant Professor' => 3,
-            'Lecturer' => 2,
-            'Staff' => 1,
-            'am' => 2,
-            'pm' => 1);
-
-        //Valid1ation of form
-        $this->validate($request, [
-            'presentDesignation' => 'required|not_in:0',
-            'pdJoiningDate' => 'required',
-            'joiningTime' => 'required|not_in:0',
-            'payScale' => 'required|not_in:0',
-            'firstDesignation' => 'required|not_in:0',
-            'firstJoiningDate' => 'required',
-            'maritalStatus' => 'required|not_in:0',
-            'department' => 'required',
-            'phone' => 'required|numeric',
-            'image' => 'required|image|mimes:jpeg'
-        ]);
-
-        //Retrieving form values
-        $user = Auth::user();
-        $id = $user->userID;
-        $presentDesignation = $request['presentDesignation'];
-        $pdJoiningDate = Carbon::createFromFormat('Y-m-d', $request['pdJoiningDate'])->toDateString();
-        $joiningTime = $request['joiningTime'];
-        $payScale = $request['payScale'];
-        $firstDesignation = $request['firstDesignation'];
-        $firstJoiningDate = Carbon::createFromFormat('Y-m-d', $request['firstJoiningDate'])->toDateString();
-        $maritalStatus = $request['maritalStatus'];
-        $department = $request['department'];
+        $description = $request['address'];
         $phone = $request['phone'];
+        $facebook = $request['facebook'];
+        $twitter = $request['twitter'];
+
         $file = $request->file('image');
 
+        $user = new User();
+        $user->email = $email;
+        $user->name = $name;
+        $user->password = $password;
+        $user->description = $description;
+        $user->phone = $phone;
+        $user->facebook_username = $facebook;
+        $user->twitter_username = $twitter;
+        $user->user_type = 1;
+
+        $user->save();
+
+
+        $id = "user-".$user->id;
 
         $filename = $id . '.jpg'; //Filename as the name of the user
 
         //If retrieved image is a file
         if ($file) {
-            $image = Image::make($file)->resize(250, 250)->stream(); //Resizing image using Intervention Image
+            $image = Image::make($file)->stream(); //Resizing image using Intervention Image
             Storage::disk('local')->put($filename, $image);  // Storing image in the disk as the name according to user id
         }
+        //  session(['user_id'=>$id])
 
-        //Point calculation of the user
-        $point = $weight[$presentDesignation] + $weight[$joiningTime] + $weight[$firstDesignation];
-        $point = ($point / 10) * 100;
-
-        //Storing values in the database
-        $user = User::where('userId', $id)->first();
-        $user->presentDesignation = $presentDesignation;
-        $user->pdJoiningDate = $pdJoiningDate;
-        $user->pdjoiningTime = $joiningTime;
-        $user->payScale = $payScale;
-        $user->firstDesignation = $firstDesignation;
-        $user->firstJoiningDate = $firstJoiningDate;
-        $user->maritalStatus = $maritalStatus;
-        $user->department = $department;
-        $user->phone = $phone;
-        $user->point = $point;
-        $user->save();
-
-        //Confirmation
-        Auth::logout($user);
         notify()->flash('Thank you! Please wait until your data is verified!', 'success');
-        return redirect()->to('/');
+        return redirect()->to('/admin');
+        //return redirect()->route('firstlogin');
     }
+
+    public function firstLogin()
+    {
+        if(Auth::check())
+            return redirect()->route('home');
+        else
+            return view('firstlogin');
+    }
+
+
+
 
     public function getUserImage($filename)
     {
@@ -143,25 +102,40 @@ class UserController extends Controller
 
 
         $this->validate($request, [
-            'id' => 'required',
+            'email' => 'required',
             'password' => 'required'
 
         ]);
 
-        if($request['id']=="admin" && $request['password']=='331412')
-        {
-                session(['admin'=>"true"]);
-                notify()->flash('Successfully logged in!', 'success');
-                return redirect()->route('admin.panel');
 
-        }
-        else{
-        if (Auth::attempt(['userID' => $request['id'], 'password' => $request['password']])) {
-            $status = User::where('userID', $request['id'])->first();
-            $st = $status->status;
-            if ($st == "Verified") {
-                notify()->flash('Successfully logged in!', 'success');
-                return redirect()->route('dashboard');
+        if (Auth::validate(['email' => $request['email'], 'password' => $request['password']])) {
+            $user = User::where('email', $request['email'])->first();
+            $st = $user->status;
+            if ($st == 1) {
+                Auth::login($user, $request->has('remember'));
+                if($user->user_type==0)
+                {
+                    notify()->flash('Successfully logged in!', 'success');
+                    return redirect()->route('user.requests');
+                }else if($user->user_type==1){
+
+                    notify()->flash('Successfully logged in!', 'success');
+                    return redirect()->route('get_conferences');
+
+                }else if($user->user_type==2) {
+
+                    notify()->flash('Successfully logged in!', 'success');
+                    return redirect()->route('reviewer_dashboard');
+
+                }else if($user->user_type==3){
+
+                    $conference_id = $request->conference_id;
+                    session(['conference_id' => $conference_id]);
+                    notify()->flash('Successfully logged in!', 'success');
+                    return redirect()->route('submissions_get',["conference_id"=>$conference_id]);
+
+                }
+
             } else {
                 notify()->flash('Sorry you are not verified yet. Please try later!', 'warning');
                 return redirect()->back();
@@ -171,7 +145,7 @@ class UserController extends Controller
             return redirect()->back();
         }
 
-        }
+
 
 
     }
@@ -184,128 +158,84 @@ class UserController extends Controller
 
     public function getLogout()
     {
-        if(session('admin')=="true")
-        {
-            session(['admin'=>"false"]);
-        }
         Auth::logout();
+        if( session('conference_id') )
+        {
+
+            $conference_id = session('conference_id');
+            return redirect()->route('submit_welcome',["conference_id"=>$conference_id]);
+        }
+
         return redirect()->route('home');
     }
 
     public function getAccount()
     {
-        return view('account', ['user' => Auth::user()]);
+        $user = Auth::user();
+        if($user->user_type==1){
+            return view('account', ['user' => $user]);
+        }
+        else if($user->user_type==2){
+            return view('reviewer_account', ['user' => $user]);
+        }
+        else if($user->user_type==3){
+            $conference_id = $_GET['conference_id'];
+            return view('user_account', ['user' => $user,"conference_id"=>$conference_id]);
+        }
+
     }
 
     public function postSaveAccount(Request $request)
     {
 
-        $this->validate($request, [
-            'name'=>'required',
-            'presentDesignation' => 'required',
-            'payScale' => 'required',
-            'phone' => 'required'
+         $this->validate($request, [
+            'name' => 'required',
         ]);
 
+        $email = $request['email'];
+        $name = $request['name'];
 
-          $weight = array('Professor' => 4,
-            'Assistant Professor' => 3,
-            'Lecturer' => 2,
-            'Staff' => 1,
-            'am' => 2,
-            'pm' => 1);
-
+        $description = $request['address'];
+        $phone = $request['phone'];
+        $facebook = $request['facebook'];
+        $twitter = $request['twitter'];
 
 
         $user = Auth::user();
 
-        $presentDesignation = $request['presentDesignation'];
-        $user->name = $request['name'];
-        $user->presentDesignation = $request['presentDesignation'];
 
-        $point = $weight[$presentDesignation] + $weight[$user->pdJoiningTime] + $weight[$user->firstDesignation];
-        $point = ($point / 10) * 100;
-        $user->point = $point;
-        $user->payScale = $request['payScale'];
-        $user->phone = $request['phone'];
-        $user->update();
+        $user->email = $email;
+        $user->name = $name;
+        if($request['password']!=null){
+            $password = bcrypt($request['password']);
+            $user->password = $password;
+        }
+        $user->description = $description;
+        $user->phone = $phone;
+        $user->facebook_username = $facebook;
+        $user->twitter_username = $twitter;
+        $user->user_type = 1;
+
+        $user->save();
 
         $file = $request->file('image');
-        $filename =  $user->userID . '.jpg';
+        $filename =  "user-".$user->id . '.jpg';
         if ($file) {
             Storage::disk('local')->put($filename, File::get($file));
         }
-        return redirect()->route('account');
+        return redirect()->route('home');
     }
 
-    public function getDashBoard()
-    {
-        $advertisements = DB::table('advertisements')->join('allotments', 'advertisements.houseName', '=', 'allotments.houseName')->get();
 
-        return view('dashboard', ['advertisements' => $advertisements]);
-    }
 
-    public function requestAllotment($houseName)
-    {
-
-        $userRequest = new UserRequest();
-        $user = Auth::user();
-        $userId = $user->userID;
-        $exists = UserRequest::where('user_id', $userId)->where('houseName', $houseName)->first();
-        if (!$exists) {
-            $userRequest->houseName = $houseName;
-            $userRequest->user_id = $userId;
-            $userRequest->save();
-            return redirect()->route('dashboard');
-        } else {
-            notify()->flash('Sorry! You have already requested for this house!', 'warning');
-            return redirect()->route('dashboard');
+        public function getAllConferences(){
+            $conferenceList = Conference::all();
+            return view('all_conference_universe',['conferenceList'=>$conferenceList]);
         }
 
-    }
 
-    public function getContact(){
-        return view('contact');
-    }
 
-    public function postNotifications(Request $request, $to)
-    {
-      $this->validate($request, [
-            'message'=>'required'
-        ]);
-      if(session("admin")=="true")
-      {
-          $from = "admin";
-      }else
-      {
-         $from = Auth::User()->userID;
-      }
 
-      $message = $request['message'];
-      $notification = new Notification();
-      $notification->from = $from;
-      $notification->to = $to;
-      $notification->message = $message;
-      $notification->save();
-      notify()->flash('Message successfully sent','success');
-      return redirect()->route('getContact');
 
-    }
 
-    public function getNotifications()
-    {
-         $admin = "admin";
-         if(session('admin')=="true")
-         {
-             $notifications = Notification::where('to',$admin)->orderBy('created_at','desc')->get();
-
-            return view('notifications',['notifications'=>$notifications]);
-         }
-         else if(Auth::check())
-         {
-             $user = Auth::user();
-             $notifications = Notification::where('to',$user->userID)->get();
-             return view('notifications',['notifications'=>$notifications]);
-         }
-    }
 }

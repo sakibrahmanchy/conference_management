@@ -12,30 +12,11 @@
 @include('includes.message-block')
 <div class="row jumbotron" style = "background-color: #204d74; color: #f5f5f5; "  >
     <div class="col-md-6">
-      <form action="{{ route('signup') }}" method = "post">
-        <h3>Sign Up</h3>
-        <div class="form-group {{ $errors->has('id')?'has-error':''  }}" >
-            <label for="id">Your ID</label>
-            <input class ="form-control" type="text" name = "id" id = "id" value = "{{ Request::old('id')  }}"/>
-        </div>
-        <div class="form-group {{ $errors->has('name')?'has-error':''  }}">
-            <label for="name">Your Name</label>
-            <input class ="form-control" type="text" name = "name" id = "name" value = "{{ Request::old('name')  }}"/>
-        </div>
-        <div class="form-group {{ $errors->has('password')?'has-error':''  }}" >
-            <label for="password">Your Password</label>
-            <input class ="form-control" type="password" name = "password" id = "password" />
-        </div>
-        <button type = "submit" class = "btn btn-primary">Submit</button>
-        <input type="hidden" name = "_token" value = "{{ Session::token() }}"/>
-      </form>
-    </div>
-    <div class="col-md-6">
       <form action="{{ route('signin') }}" method = "post">
         <h3>Sign In</h3>
-        <div class="form-group {{ $errors->has('id')?'has-error':''  }}">
-            <label for="id">Your ID</label>
-            <input class ="form-control" type="text" name = "id" id = "id" value = "{{ Request::old('id')  }}"/>
+        <div class="form-group {{ $errors->has('email')?'has-error':''  }}">
+            <label for="id">Your email</label>
+            <input class ="form-control" type="text" name = "email" id = "email" value = "{{ Request::old('email')  }}"/>
          </div>
         <div class="form-group {{ $errors->has('password')?'has-error':''  }}" >
             <label for="password">Your Password</label>
@@ -45,6 +26,10 @@
         <input type="hidden" name = "_token" value = "{{ Session::token() }}"/>
       </form>
     </div>
+    <div class="col-md-6 text-center" style="margin-top:50px">
+            <h3>Not registered yet?</h3>
+            <h4><a href="{{route('firstlogin')}}"><button class="btn btn-success">Sign up</button></a> to create and manage conference</h4>
+      </div>
 </div>
 
 

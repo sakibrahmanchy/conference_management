@@ -13,15 +13,15 @@
   <br>
   <div id="myCarousel" class="carousel slide" data-ride="carousel">
     <!-- Indicators -->
-    <ol class="carousel-indicators">
+   {{-- <ol class="carousel-indicators">
       @foreach($advertisements as $index=>$advertisement)
          <li data-target="#myCarousel" data-slide-to="{{ $index }}" class="active"></li>
       @endforeach
-    </ol>
+    </ol>--}}
 
     <!-- Wrapper for slides -->
     <div class="carousel-inner jumbotron" role="listbox" style = " background-color:#204d74 ;color: #f5f5f5;">
-        @foreach($advertisements as $index=>$advertisement)
+       {{-- @foreach($advertisements as $index=>$advertisement)
                 <div class="item @if($index==0) {{ 'active' }} @endif">
                         <div class="col-sm-2">
 
@@ -36,7 +36,7 @@
                             <a  href="{{route('request.allotment',['housename'=>$advertisement->houseName])}}" type = "button" class = "btn btn-primary col-md-offset-3">Request for allotment</a><br><br>
                         </div>
                 </div>
-        @endforeach
+        @endforeach--}}
     </div>
 
     <!-- Left and right controls -->

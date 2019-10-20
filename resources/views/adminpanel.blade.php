@@ -17,9 +17,9 @@
                     <label for="houseNo">House to be alloted:</label>
                     <select class="form-control" name = "houseNo" required>
                        <option selected="" value = "0">Select House no. from list</option>
-                       @foreach($allotmentStatus as $status)
+                       {{--@foreach($allotmentStatus as $status)
                             <option value="{{$status->houseName}}">{{$status->houseName}}</option>
-                       @endforeach
+                       @endforeach--}}
                     </select>
                     <br>
                     <label for="comments">House description:</label>

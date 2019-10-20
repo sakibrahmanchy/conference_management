@@ -1,12 +1,9 @@
 @extends('layouts.master')
 @section('content')
 <ul class="nav nav-pills col-md-offset-3" role="tablist">
-  <li role="presentation" class = ""><a href="{{route('admin.panel')}}">Advertisements</a></li>
-  <li role="presentation" class = "active"><a href="">User Requests <span class="badge"></span></a></li>
-  <li role="presentation"><a href="{{ route('allotments') }}">Allotment Requests</a></li>
-  <li role="presentation"><a href="{{ route('route.house.entry') }}">HouseEntry </a></li>
+  <li role="presentation" class = "active"><a href="{{route('user.requests')}}">User Requests <span class="badge"></span></a></li>
 </ul>
-
+<br>
 @include('includes.message-block')
 <body>
 
@@ -27,33 +24,27 @@
                 <div class="item @if($index==0) {{ 'active' }} @endif">
                          <div class="col-sm-4 " style = " background-color:#204d74 ">
                          <p class="text-left"><h2>{{$userRequest->name}}</h2></p>
-                         @if(Storage::disk('local')->has($userRequest->userID.'.jpg'))
-                                    <image src ="{{route('account.image',['filename'=>$userRequest->userID.'.jpg'])}}" alt = "" class="img-responsive"></image>
+                         @if(Storage::disk('local')->has("user-".$userRequest->id.'.jpg'))
+                                    <image src ="{{route('account.image',['filename'=>"user-".$userRequest->id.'.jpg'])}}" alt = "" class="img-responsive"></image>
                          @else
                             <image src ="{{route('account.image',['filename'=>'default.jpg'])}}" alt = "" class="img-responsive"></image>
                          @endif
                         </div>
-                        <div class="col-sm-4" style = "text-align: left; background-color:#204d74 ">
+                        <div class="col-sm-8" style = "text-align: left; background-color:#204d74 ">
                             <p></p><br>
-                             <p><b>Staff ID:</b> {{$userRequest->userID}}</p>
-                             <p><b>Department:</b> {{$userRequest->department}}</p>
-                             <p><b>Present Designation:</b> {{$userRequest->presentDesignation}}</p>
-                             <p><b>Joining Date:</b> {{$userRequest->pdJoiningDate}}</p>
-                             <p><b>First Designation:</b>  {{$userRequest->firstDesignation}}</p>
-                             <p><b>Joining Date:</b> {{$userRequest->firstJoiningDate}}</p><br>
+                             <p><b>Staff email:</b> {{$userRequest->email}}</p>
+                             <p><b>Description:</b> {{$userRequest->description}}</p>
+                             <p><b>Phone:</b> {{$userRequest->phone}}</p>
+                             <p><b>Facebook:</b> <a href = "www.facebook.com/{{$userRequest->facebook}}">www.facebook.com/{{$userRequest->facebook}}</a></p>
+                             <p><b>Twitter:</b> <a href = "www.twitter.com/{{$userRequest->twitter}}">www.twitter.com/{{$userRequest->firstDesignation}}</a></p>
 
                         </div>
-                        <div class="col-sm-4" style = "text-align: left; background-color:#204d74 ">
+                        <div class="col-sm-4" style = "text-align: left; background-color:#204d74;margin-left: 140px ">
                             <p></p><br><br><br><br>
-                             <p><b>Marital Status:</b> {{$userRequest->maritalStatus}}</p>
-                             <p><b>Pay Scale:</b> {{$userRequest->payScale}}</p>
-                             <p><b>Phone:</b> {{$userRequest->phone}}</p><br>
-                             <a href="{{route('user.accept',['userid'=>$userRequest->userID])}}" type = "button" class = "btn btn-primary">Accept</a>
-                            <a href="{{route('user.reject',['userid'=>$userRequest->userID])}}" type = "button" class = "btn btn-primary">Reject</a><br><br>
+
+                             <a href="{{route('user.accept',['userid'=>$userRequest->id])}}" type = "button" class = "btn btn-primary">Accept</a>
+                            <a href="{{route('user.reject',['userid'=>$userRequest->id])}}" type = "button" class = "btn btn-primary">Reject</a><br><br>
                         </div>
-
-
-
                 </div>
         @endforeach
     </div>
